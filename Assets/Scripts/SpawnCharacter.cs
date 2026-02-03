@@ -1,4 +1,5 @@
 using Photon.Pun;
+using System.Collections;
 using UnityEngine;
 
 public class SpawnCharacter : MonoBehaviour
@@ -7,9 +8,16 @@ public class SpawnCharacter : MonoBehaviour
     public Transform[] spawnPoint;
     void Start()
     {
+
         if (PhotonNetwork.IsConnected)
         {
-            PhotonNetwork.Instantiate(character.name, spawnPoint[PhotonNetwork.CountOfPlayers - 1].position, spawnPoint[PhotonNetwork.CountOfPlayers - 1].rotation);
+            Debug.Log($"AppId: {PhotonNetwork.PhotonServerSettings.AppSettings.AppIdRealtime}");
+            Debug.Log($"Region: {PhotonNetwork.CloudRegion}");
+            Debug.Log($"Version: {PhotonNetwork.GameVersion}");
+            Debug.Log($"Room: {PhotonNetwork.CurrentRoom?.Name}");
+
+            StartCoroutine(SpawnPlayer());
+            //PhotonNetwork.Instantiate(character.name, spawnPoint[PhotonNetwork.CountOfPlayers - 1].position, spawnPoint[PhotonNetwork.CountOfPlayers - 1].rotation);
         }
     }
 
@@ -17,5 +25,30 @@ public class SpawnCharacter : MonoBehaviour
     void Update()
     {
         
+    }
+    private IEnumerator SpawnPlayer()
+
+    {
+
+        //yield return new WaitUntil(PhotonNetworkIsConnectedAndReady);
+        yield return new WaitUntil(() => PhotonNetwork.InRoom);
+
+
+        if (PhotonNetwork.IsConnected)
+        {
+            PhotonNetwork.Instantiate(character.name, spawnPoint[PhotonNetwork.CurrentRoom.PlayerCount - 1].position, spawnPoint[PhotonNetwork.CurrentRoom.PlayerCount - 1].rotation, 0);
+
+        }
+
+
+
+    }
+
+    private bool PhotonNetworkIsConnectedAndReady()
+
+    {
+
+        return PhotonNetwork.IsConnectedAndReady;
+
     }
 }

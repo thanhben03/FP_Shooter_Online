@@ -25,7 +25,9 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
-        PhotonNetwork.LoadLevel("MainLevel");
+
+       PhotonNetwork.LoadLevel("MainLevel");
+        
     }
 
     public override void OnJoinRandomFailed(short returnCode, string message)

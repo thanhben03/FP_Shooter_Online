@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Photon.Pun;
+using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -51,6 +52,9 @@ namespace StarterAssets
 		[Tooltip("How far in degrees can you move the camera down")]
 		public float BottomClamp = -90.0f;
 
+		[Header("Photon")]
+		PhotonView photonView;
+
 		// cinemachine
 		private float _cinemachineTargetPitch;
 
@@ -97,7 +101,11 @@ namespace StarterAssets
 
 		private void Start()
 		{
-			_controller = GetComponent<CharacterController>();
+            photonView = GetComponentInParent<PhotonView>();
+
+            
+
+            _controller = GetComponent<CharacterController>();
 			_input = GetComponent<StarterAssetsInputs>();
 #if ENABLE_INPUT_SYSTEM
 			_playerInput = GetComponent<PlayerInput>();
@@ -108,18 +116,37 @@ namespace StarterAssets
 			// reset our timeouts on start
 			_jumpTimeoutDelta = JumpTimeout;
 			_fallTimeoutDelta = FallTimeout;
-		}
+            if (!photonView.IsMine)
+            {
+                // Tắt input
+                _input.enabled = false;
+
+                // Tắt PlayerInput
+#if ENABLE_INPUT_SYSTEM
+                _playerInput.enabled = false;
+#endif
+
+                // Tắt camera local
+                CinemachineCameraTarget.SetActive(false);
+            }
+        }
 
 		private void Update()
 		{
-			JumpAndGravity();
-			GroundedCheck();
-			Move();
-		}
+            if (!photonView.IsMine) return;
+
+            JumpAndGravity();
+            GroundedCheck();
+            Move();
+
+
+        }
 
 		private void LateUpdate()
 		{
-			CameraRotation();
+            if (!photonView.IsMine) return;
+
+            CameraRotation();
 		}
 
 		private void GroundedCheck()
@@ -153,6 +180,10 @@ namespace StarterAssets
 
 		private void Move()
 		{
+            if (!photonView.IsMine)
+			{
+				return;
+			}
 			// set target speed based on move speed, sprint speed and if sprint is pressed
 			float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
 
