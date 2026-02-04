@@ -4,6 +4,7 @@ using UnityEngine;
 public class Weapon : MonoBehaviour
 {
     [SerializeField] ParticleSystem muzzleFlash;
+    [SerializeField] Animator animator;
     [SerializeField] LayerMask interactionLayers;
 
     CinemachineImpulseSource impluseSource;
@@ -19,12 +20,20 @@ public class Weapon : MonoBehaviour
         
     }
 
+    public void PlayEffect()
+    {
+        muzzleFlash.Play();
+        animator.Play("PistolShot", 0, 0f);
+    }
+
     public void Shoot(WeaponSO weaponSO)
     {
+        PlayEffect();
         RaycastHit hit;
 
         Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, Mathf.Infinity, interactionLayers, QueryTriggerInteraction.Ignore);
-        muzzleFlash.Play();
+
+
         //impluseSource.GenerateImpulse();
         if (hit.collider != null)
         {

@@ -118,16 +118,14 @@ namespace StarterAssets
 			_fallTimeoutDelta = FallTimeout;
             if (!photonView.IsMine)
             {
-                // Tắt input
+
                 _input.enabled = false;
 
-                // Tắt PlayerInput
 #if ENABLE_INPUT_SYSTEM
                 _playerInput.enabled = false;
 #endif
 
-                // Tắt camera local
-                CinemachineCameraTarget.SetActive(false);
+				//CinemachineCameraTarget.SetActive(false);
             }
         }
 

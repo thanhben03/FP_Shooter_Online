@@ -165,6 +165,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6220886357080909665}
   - component: {fileID: 2541477826653767211}
+  - component: {fileID: 8967560663078228352}
   - component: {fileID: 5235676138745018222}
   - component: {fileID: 5947294922035074780}
   - component: {fileID: 4366669019542789996}
@@ -220,6 +221,20 @@ CharacterController:
   m_SkinWidth: 0.02
   m_MinMoveDistance: 0
   m_Center: {x: 0, y: 0.93, z: 0}
+--- !u!114 &8967560663078228352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6344660145033184337}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7370183b977afdd4e964c67a0ea65a05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  activeWeapon: {fileID: 4026427791903226575}
+  gunAnimator: {fileID: 0}
 --- !u!114 &5235676138745018222
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -467,6 +482,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: caa3c83904fbb5b40ba508ca86ac430c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerController: {fileID: 8967560663078228352}
+  allWeapons:
+  - {fileID: 11400000, guid: 4b12fdd03949ba74d8b6e56e27caa358, type: 2}
   currentWeaponSO: {fileID: 11400000, guid: 4b12fdd03949ba74d8b6e56e27caa358, type: 2}
   animator: {fileID: 0}
   playerFollowCamera: {fileID: 0}

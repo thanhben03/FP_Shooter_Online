@@ -1,12 +1,14 @@
-using Cinemachine;
+﻿using Cinemachine;
 using Photon.Pun;
 using StarterAssets;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
 public class ActiveWeapon : MonoBehaviourPun
 {
-
+    [SerializeField] PlayerController playerController;
+    [SerializeField] WeaponSO[] allWeapons;
     [SerializeField] WeaponSO currentWeaponSO;
     [SerializeField] Animator animator;
     [SerializeField] private CinemachineVirtualCamera playerFollowCamera;
@@ -22,21 +24,20 @@ public class ActiveWeapon : MonoBehaviourPun
     int currentAmmo;
 
 
-
     [SerializeField] private float timeToNextShot = 0f;
 
     private void Awake()
     {
         starterAssetsInputs = GetComponentInParent<StarterAssetsInputs>();
         animator = GetComponent<Animator>();
+        
     }
 
     private void Start()
     {
         //defaultFOV = playerFollowCamera.m_Lens.FieldOfView;
-        //if (!photonView.IsMine) return;
+        if (!photonView.IsMine) return;
 
-        SwitchWeapon(currentWeaponSO);
     }
 
     private void Update()
@@ -48,7 +49,7 @@ public class ActiveWeapon : MonoBehaviourPun
             return;
         }
 
-        HandleShoot();
+        Test();
         //HandleZoom();
     }
 
@@ -62,18 +63,19 @@ public class ActiveWeapon : MonoBehaviourPun
         ammoText.text = currentAmmo.ToString();
     }
 
-    public void SwitchWeapon(WeaponSO weaponSO)
+
+    public void EquipWeaponLocal(int weaponId)
     {
         if (currentWeapon)
-        {
-            PhotonNetwork.Destroy(currentWeapon.gameObject);
-        }
-        Weapon weapon = PhotonNetwork.Instantiate(
-            weaponSO.weaponPrefab.name,
-            Vector3.zero, Quaternion.identity
-        ).GetComponent<Weapon>();
+            Destroy(currentWeapon.gameObject);
 
-        weapon.transform.SetParent(transform, true);
+        WeaponSO weaponSO = allWeapons[weaponId];
+
+        Weapon weapon = Instantiate(weaponSO.weaponPrefab, transform)
+            .GetComponent<Weapon>();
+
+        weapon.transform.localPosition = Vector3.zero;
+        weapon.transform.localRotation = Quaternion.identity;
 
         currentWeapon = weapon;
         currentWeaponSO = weaponSO;
@@ -81,19 +83,24 @@ public class ActiveWeapon : MonoBehaviourPun
 
     }
 
-    private void HandleShoot()
+    void Test()
+    {
+        if (!starterAssetsInputs.shoot) return;
+        playerController.RequestFire();
+    }
+
+
+    public void HandleShoot()
     {
         timeToNextShot += Time.deltaTime;
-        if (timeToNextShot < currentWeaponSO.FireRate || currentAmmo <= 0)
+        if (timeToNextShot < currentWeaponSO.FireRate)
         {
             return;
 
         }
-        if (!starterAssetsInputs.shoot) return;
         timeToNextShot = 0f;
         //AdjustAmmo(-1);
         currentWeapon.Shoot(currentWeaponSO);
-        animator.Play("PistolShot", 0, 0f);
 
         if (!currentWeaponSO.IsAutomatic)
         {
@@ -102,25 +109,10 @@ public class ActiveWeapon : MonoBehaviourPun
         }
     }
 
-    //void HandleZoom()
-    //{
-    //    if (!currentWeaponSO.CanZoom)
-    //    {
-    //        return;
-    //    }
+    public void PlayFireEffectsOnly()
+    {
+        if (!currentWeapon) return;
+        currentWeapon.PlayEffect();
+    }
 
-    //    if (starterAssetsInputs.zoom)
-    //    {
-    //        zoomInImage.SetActive(true);
-    //        playerFollowCamera.m_Lens.FieldOfView = Mathf.Lerp(playerFollowCamera.m_Lens.FieldOfView, defaultFOV - currentWeaponSO.ZoomAmount, Time.deltaTime * 10f);
-    //        weaponCamera.fieldOfView = currentWeaponSO.ZoomAmount - 10f;
-    //    }
-    //    else
-    //    {
-    //        zoomInImage.SetActive(false);
-    //        playerFollowCamera.m_Lens.FieldOfView = Mathf.Lerp(playerFollowCamera.m_Lens.FieldOfView, defaultFOV, Time.deltaTime * 10f);
-    //        weaponCamera.fieldOfView = defaultFOV;
-
-    //    }
-    //}
 }
