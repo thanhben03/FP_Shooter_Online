@@ -127,7 +127,7 @@ MonoBehaviour:
   animator: {fileID: 3600109551422609810}
   interactionLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4294967295
 --- !u!1001 &6015512830245351359
 PrefabInstance:
   m_ObjectHideFlags: 0

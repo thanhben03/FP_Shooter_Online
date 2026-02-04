@@ -2,6 +2,7 @@
 using Photon.Pun;
 using StarterAssets;
 using System.Collections;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -49,7 +50,7 @@ public class ActiveWeapon : MonoBehaviourPun
             return;
         }
 
-        Test();
+        HandleShoot();
         //HandleZoom();
     }
 
@@ -68,8 +69,8 @@ public class ActiveWeapon : MonoBehaviourPun
     {
         if (currentWeapon)
             Destroy(currentWeapon.gameObject);
-
-        WeaponSO weaponSO = allWeapons[weaponId];
+        
+        WeaponSO weaponSO = GetWeaponSOFromID(weaponId);
 
         Weapon weapon = Instantiate(weaponSO.weaponPrefab, transform)
             .GetComponent<Weapon>();
@@ -83,10 +84,33 @@ public class ActiveWeapon : MonoBehaviourPun
 
     }
 
+    public void EquipWeaponNetwork(int weaponId)
+    {
+        if (!photonView.IsMine) return;
+        photonView.RPC(nameof(RPC_EquipWeapon), RpcTarget.All, weaponId);
+    }
+
+    [PunRPC]
+    void RPC_EquipWeapon(int weaponId)
+    {
+        EquipWeaponLocal(weaponId);
+    }
+
+    private WeaponSO GetWeaponSOFromID(int weaponId)
+    {
+        for (int i = 0; i < allWeapons.Length; i++)
+        {
+            if (allWeapons[i].ID == weaponId)
+            {
+                return allWeapons[i];
+            }
+        }
+
+        return null;
+    }
+
     void Test()
     {
-        if (!starterAssetsInputs.shoot) return;
-        playerController.RequestFire();
     }
 
 
@@ -99,6 +123,11 @@ public class ActiveWeapon : MonoBehaviourPun
 
         }
         timeToNextShot = 0f;
+        if (!starterAssetsInputs.shoot) return;
+        Debug.Log("Fireee");
+
+        playerController.RequestFire();
+
         //AdjustAmmo(-1);
         currentWeapon.Shoot(currentWeaponSO);
 

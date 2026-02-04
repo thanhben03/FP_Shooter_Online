@@ -8,12 +8,7 @@ public class PlayerController : MonoBehaviourPun
 
     private void Start()
     {
-        if (!photonView.IsMine) return;
-
-        photonView.RPC(nameof(RPC_EquipWeapon), RpcTarget.AllBuffered, 0);
-
-        if (!gunAnimator)
-            gunAnimator = GetComponentInChildren<Animator>();
+        
     }
 
     public void RequestFire()
@@ -31,9 +26,5 @@ public class PlayerController : MonoBehaviourPun
         activeWeapon.PlayFireEffectsOnly();
     }
 
-    [PunRPC]
-    void RPC_EquipWeapon(int weaponId)
-    {
-        activeWeapon.EquipWeaponLocal(weaponId);
-    }
+
 }

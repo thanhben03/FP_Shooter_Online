@@ -1,4 +1,5 @@
 using Cinemachine;
+using Photon.Pun;
 using UnityEngine;
 
 public class Weapon : MonoBehaviour
@@ -23,12 +24,12 @@ public class Weapon : MonoBehaviour
     public void PlayEffect()
     {
         muzzleFlash.Play();
-        animator.Play("PistolShot", 0, 0f);
+        animator.Play("Shot", 0, 0f);
     }
 
     public void Shoot(WeaponSO weaponSO)
     {
-        PlayEffect();
+        //PlayEffect();
         RaycastHit hit;
 
         Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, Mathf.Infinity, interactionLayers, QueryTriggerInteraction.Ignore);
@@ -38,7 +39,10 @@ public class Weapon : MonoBehaviour
         if (hit.collider != null)
         {
 
-            Instantiate(weaponSO.hitVFX, hit.point, Quaternion.identity);
+            Debug.Log(hit.collider.name);
+            //Instantiate(weaponSO.hitVFX, hit.point, Quaternion.identity);
+            PhotonNetwork.Instantiate(weaponSO.hitVFX.name, hit.point, Quaternion.identity);
+
             //EnemyHealth enemyHealth = hit.collider.GetComponentInParent<EnemyHealth>();
 
             //enemyHealth?.TakeDamage(weaponSO.Damage);
