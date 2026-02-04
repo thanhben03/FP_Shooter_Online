@@ -43,6 +43,9 @@ MonoBehaviour:
   - RPC_FireEffects
   - RPC_ApplyDamage
   - RPC_SyncHP
+  - RPC_PlayExplosion
+  - RPC_DisableAmmo
+  - RPC_EnableAmmo
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

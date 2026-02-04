@@ -5,6 +5,7 @@ public class EnemyHealth : MonoBehaviourPun
 {
     [SerializeField] private float maxHp = 100f;
     [SerializeField] private float hp;
+    [SerializeField] private GameObject explosionPrefab;
 
     public float HP => hp;
     public float MaxHP => maxHp;
@@ -35,6 +36,7 @@ public class EnemyHealth : MonoBehaviourPun
 
         if (hp <= 0)
         {
+
             Die();
         }
     }
@@ -44,13 +46,20 @@ public class EnemyHealth : MonoBehaviourPun
     {
         hp = newHp;
 
-        // TODO: update UI / healthbar
     }
 
     void Die()
     {
 
+        photonView.RPC(nameof(RPC_PlayExplosion), RpcTarget.All, transform.position);
         PhotonNetwork.Destroy(gameObject);
+
+    }
+
+    [PunRPC]
+    void RPC_PlayExplosion(Vector3 pos)
+    {
+        Instantiate(explosionPrefab, pos, Quaternion.identity);
     }
 
 }

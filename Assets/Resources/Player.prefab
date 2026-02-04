@@ -487,6 +487,7 @@ MonoBehaviour:
   allWeapons:
   - {fileID: 11400000, guid: 4b12fdd03949ba74d8b6e56e27caa358, type: 2}
   - {fileID: 11400000, guid: 230024260dc5a1441b69f3a62e1a74cc, type: 2}
+  - {fileID: 11400000, guid: ea5f5c6f552bd8f4fba68529a4da0ae2, type: 2}
   currentWeaponSO: {fileID: 11400000, guid: 4b12fdd03949ba74d8b6e56e27caa358, type: 2}
   animator: {fileID: 0}
   playerFollowCamera: {fileID: 0}

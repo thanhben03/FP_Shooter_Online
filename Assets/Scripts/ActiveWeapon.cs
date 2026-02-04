@@ -87,7 +87,7 @@ public class ActiveWeapon : MonoBehaviourPun
     public void EquipWeaponNetwork(int weaponId)
     {
         if (!photonView.IsMine) return;
-        photonView.RPC(nameof(RPC_EquipWeapon), RpcTarget.All, weaponId);
+        photonView.RPC(nameof(RPC_EquipWeapon), RpcTarget.AllBuffered, weaponId);
     }
 
     [PunRPC]

@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviourPun
 {
+
     public ActiveWeapon activeWeapon;
     [SerializeField] private Animator gunAnimator;
 
@@ -26,5 +27,8 @@ public class PlayerController : MonoBehaviourPun
         activeWeapon.PlayFireEffectsOnly();
     }
 
-
+    public void AddAmmo()
+    {
+        AmmoUI.Instance.UpdateUI(30);
+    }
 }
