@@ -1,12 +1,24 @@
-using Photon.Pun;
+﻿using Photon.Pun;
 using StarterAssets;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using static UnityEngine.Rendering.DebugUI.Table;
 
-public class Turret : MonoBehaviour
+public class Turret : MonoBehaviourPun
 {
+    [SerializeField] GameObject projectilePrefab;
     [SerializeField] FirstPersonController target;
     [SerializeField] Transform turretHead;
+    [SerializeField] Transform projectileSpawnPoint;
+
+    [Header("Stats")]
+    [SerializeField] float fireRate = 0.3f;
+    [SerializeField] float range = 25f;
+    [SerializeField] int damage = 2;
+
+    float fireTimer;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -17,9 +29,57 @@ public class Turret : MonoBehaviour
     void Update()
     {
         if (!PhotonNetwork.IsMasterClient) return;
+
         FindNearestPlayer();
         if (target == null) return;
-        turretHead.LookAt(target.gameObject.transform);
+
+        // aim
+        turretHead.LookAt(target.transform.position);
+
+        // bắn theo fireRate
+        fireTimer -= Time.deltaTime;
+        if (fireTimer <= 0f)
+        {
+            fireTimer = fireRate;
+            Fire();
+        }
+
+    }
+
+
+    void Fire()
+    {
+        
+        photonView.RPC(nameof(RPC_SpawnProjectile), RpcTarget.All);
+
+
+    }
+
+    IEnumerator FireRoutine()
+    {
+        while (target)
+        {
+            yield return new WaitForSeconds(fireRate);
+
+            photonView.RPC(nameof(RPC_SpawnProjectile), RpcTarget.All);
+
+
+        }
+
+        yield return null;
+    }
+
+    [PunRPC]
+    void RPC_SpawnProjectile()
+    {
+        GameObject projectileObj = Instantiate(projectilePrefab, projectileSpawnPoint.position, turretHead.rotation);
+        Projectile projectile = projectileObj.GetComponent<Projectile>();
+        projectile.Init(damage);
+        //if (playerHealth)
+        //{
+        //    projectile.transform.LookAt(playerHealth.transform.position);
+
+        //}
     }
 
 
