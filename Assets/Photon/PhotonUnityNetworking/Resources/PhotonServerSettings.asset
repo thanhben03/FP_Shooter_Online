@@ -41,6 +41,8 @@ MonoBehaviour:
   - RespawnSpaceship
   - RPC_EquipWeapon
   - RPC_FireEffects
+  - RPC_ApplyDamage
+  - RPC_SyncHP
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
