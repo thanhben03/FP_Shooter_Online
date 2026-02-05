@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Lobby.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
+    path: Assets/Scenes/SelectCharacter.unity
+    guid: d971bb696bfca8b43bd29937acbf5037
+  - enabled: 1
     path: Assets/GDTV Sharp Shooter Assets/Scenes/MainLevel.unity
     guid: 6093c6e506c382a4a99e07a03548dcf2
   m_configObjects:

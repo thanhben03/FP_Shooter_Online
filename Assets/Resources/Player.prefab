@@ -375,6 +375,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 5
+  playerCamera: {fileID: 8013569340898738919}
 --- !u!114 &8967560663078228352
 MonoBehaviour:
   m_ObjectHideFlags: 0

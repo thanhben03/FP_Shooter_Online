@@ -5,7 +5,8 @@ using UnityEngine;
 public class PlayerHealth : MonoBehaviourPun 
 {
     [SerializeField] int health;
-   
+    public event Action<int> OnHealthChange;
+    public PlayerCamera playerCamera;
     void Start()
     {
         health = 5;
@@ -21,10 +22,15 @@ public class PlayerHealth : MonoBehaviourPun
 
     public void TakeDamage(int damage)
     {
-        //if (!photonView.IsMine) return;
-
+        //if (!photonView.IsMine) return;s
         health -= damage;
         HealthUI.Instance.UpdateUIHealth(health);
+        if (health <= 0)
+        {
+            playerCamera.SwitchCamera();
+            GameObject.FindGameObjectWithTag("Canvas").SetActive(false);
 
+            PhotonNetwork.Destroy(gameObject);
+        }
     }
 }
