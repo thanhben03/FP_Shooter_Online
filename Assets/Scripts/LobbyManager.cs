@@ -1,4 +1,3 @@
-using Cinemachine;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -6,28 +5,30 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
-public class GameManager : MonoBehaviourPunCallbacks
+public class LobbyManager : MonoBehaviourPunCallbacks
 {
-    public static GameManager Instance;
+    public static LobbyManager Instance;
     public TextMeshProUGUI statusText;
 
     public TMP_InputField inputRoomName;
 
-    public event Action<List<RoomInfo>> OnAnyPlayerCreatedRoom;
+    public event Action<Dictionary<string, RoomInfo>> OnAnyPlayerCreatedRoom;
     public event Action OnAnyPlayerJoinedRoom;
     public event Action OnAnyPlayerLeftRoom;
+
+    private Dictionary<string, RoomInfo> cachedRoomList = new();
+
     private void Awake()
     {
         Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
-    void Start()
+    private void Start()
     {
         PhotonNetwork.AutomaticallySyncScene = true;
         PhotonNetwork.ConnectUsingSettings();
+
     }
 
     public void CreateRoom()
@@ -47,6 +48,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         RoomOptions options = new RoomOptions();
         options.MaxPlayers = 4;
+        options.EmptyRoomTtl = 0;
 
         statusText.text = "Creating room: " + roomName;
         PhotonNetwork.CreateRoom(roomName, options);
@@ -75,7 +77,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         PhotonNetwork.LoadLevel("SelectCharacter");
-        
+
     }
 
     public void JoinRandom()
@@ -90,40 +92,20 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
-        OnAnyPlayerCreatedRoom.Invoke(roomList);   
-    }
-    public override void OnPlayerEnteredRoom(Player newPlayer)
-    {
-        Debug.Log("Player joined: " + newPlayer.NickName + " | ActorNumber: " + newPlayer.ActorNumber);
-        OnAnyPlayerJoinedRoom?.Invoke();
-
-    }
-
-    public override void OnPlayerLeftRoom(Player otherPlayer)
-    {
-        Debug.Log("Player left: " + otherPlayer.NickName + " | ActorNumber: " + otherPlayer.ActorNumber);
-
-        OnAnyPlayerLeftRoom?.Invoke();
-    }
-
-    public override void OnMasterClientSwitched(Player newMasterClient)
-    {
-        Debug.Log("New Master: " + newMasterClient.NickName);
-
-        if (!PhotonNetwork.InRoom) return;
-
-        if (PhotonNetwork.IsMasterClient)
+        foreach (var room in roomList)
         {
-            PhotonNetwork.CurrentRoom.IsOpen = false;
-            PhotonNetwork.CurrentRoom.IsVisible = false;
-
-            PhotonNetwork.LeaveRoom();
+            if (room.RemovedFromList || room.PlayerCount == 0)
+            {
+                cachedRoomList.Remove(room.Name);
+            }
+            else
+            {
+                cachedRoomList[room.Name] = room;
+            }
         }
-
+        OnAnyPlayerCreatedRoom.Invoke(cachedRoomList);
     }
 
-    public override void OnLeftRoom()
-    {
-        SceneManager.LoadScene("Lobby");
-    }
+
+
 }

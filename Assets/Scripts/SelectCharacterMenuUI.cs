@@ -1,16 +1,18 @@
 using Photon.Pun;
 using Photon.Realtime;
+using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SelectCharacterMenuUI : MonoBehaviourPunCallbacks
 {
     public TextMeshProUGUI roomNameText;
     public GameObject[] characters;
-    private const string SLOT_KEY = "slot";
-
-    void Start()
+   
+    IEnumerator Start()
     {
+        yield return new WaitForSeconds(1);
         if (PhotonNetwork.InRoom)
         {
             roomNameText.text = "Room: " + PhotonNetwork.CurrentRoom.Name;
@@ -23,20 +25,20 @@ public class SelectCharacterMenuUI : MonoBehaviourPunCallbacks
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     void UpdateUI()
     {
         for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
         {
-            characters[i].gameObject.SetActive(true);
-            Player player = PhotonNetwork.PlayerList[i];
+            characters[i].gameObject.SetActive(false);
 
-            characters[i].gameObject.GetComponent<PlayerSelect>().SetData(player);
+        }
+        Debug.Log(PhotonNetwork.PlayerList.Length);
+        for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
+        {
+            characters[i].SetActive(true);
+            Player player = PhotonNetwork.PlayerList[i];
+            Debug.Log(player.NickName);
+            characters[i].GetComponent<PlayerSelect>().SetData(player);
 
         }
     }
@@ -48,4 +50,29 @@ public class SelectCharacterMenuUI : MonoBehaviourPunCallbacks
 
     }
 
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        Debug.Log("Player left: " + otherPlayer.NickName + " | ActorNumber: " + otherPlayer.ActorNumber);
+        UpdateUI();
+    }
+
+    public override void OnMasterClientSwitched(Player newMasterClient)
+    {
+        Debug.Log("New Master: " + newMasterClient.NickName);
+
+        if (!PhotonNetwork.InRoom) return;
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.CurrentRoom.IsOpen = false;
+            PhotonNetwork.CurrentRoom.IsVisible = false;
+
+            PhotonNetwork.LeaveRoom();
+        }
+
+    }
+    public override void OnLeftRoom()
+    {
+        SceneManager.LoadScene("Lobby");
+    }
 }

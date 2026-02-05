@@ -11,7 +11,7 @@ public class RoomItem : MonoBehaviour
     {
         joinButton.onClick.AddListener(() =>
         {
-            GameManager.Instance.JoinRoom(roomNameText.text);
+            LobbyManager.Instance.JoinRoom(roomNameText.text);
         });
     }
 

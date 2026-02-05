@@ -15,13 +15,21 @@ public class LobbyUI : MonoBehaviour
 
     void Start()
     {
-        GameManager.Instance.OnAnyPlayerCreatedRoom += GameManager_OnAnyPlayerCreatedRoom;
+        LobbyManager.Instance.OnAnyPlayerCreatedRoom += LobbyManager_OnAnyPlayerCreatedRoom;
     }
 
-    private void GameManager_OnAnyPlayerCreatedRoom(List<RoomInfo> list)
+    private void LobbyManager_OnAnyPlayerCreatedRoom(Dictionary<string, RoomInfo> list)
     {
-        foreach (RoomInfo roomInfo in list)
+        foreach (Transform child in roomContainer)
         {
+            Destroy(child.gameObject);
+        }
+
+        foreach (var pair in list)
+        {
+            string roomName = pair.Key;
+            RoomInfo roomInfo = pair.Value;
+
             GameObject roomObj = Instantiate(roomPrefab, roomContainer);
             roomObj.GetComponent<RoomItem>().Init(roomInfo.Name);
 
