@@ -33,7 +33,12 @@ public class Projectile : MonoBehaviour
             Instantiate(projectileVFXPrefab, transform.position, Quaternion.identity);
             Destroy(gameObject);
             if (!playerPV.IsMine) return;
-            Debug.Log(playerPV.ViewID);
+
+            PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(damage);
+            }
 
         }
     }

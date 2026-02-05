@@ -31,4 +31,9 @@ public class PlayerController : MonoBehaviourPun
     {
         AmmoUI.Instance.UpdateUI(30);
     }
+
+    public void TakeDamage(float damage)
+    {
+
+    }
 }
