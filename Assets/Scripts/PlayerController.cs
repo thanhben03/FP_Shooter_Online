@@ -16,7 +16,6 @@ public class PlayerController : MonoBehaviourPun
     {
         if (!photonView.IsMine) return;
 
-        activeWeapon.HandleShoot();
         photonView.RPC(nameof(RPC_FireEffects), RpcTarget.All);
 
     }

@@ -1,6 +1,7 @@
 ﻿using Cinemachine;
 using Photon.Pun;
 using StarterAssets;
+using System;
 using System.Collections;
 using System.Linq;
 using TMPro;
@@ -12,7 +13,6 @@ public class ActiveWeapon : MonoBehaviourPun
     [SerializeField] WeaponSO[] allWeapons;
     [SerializeField] WeaponSO currentWeaponSO;
     [SerializeField] Animator animator;
-    [SerializeField] private CinemachineVirtualCamera playerFollowCamera;
     [SerializeField] private GameObject zoomInImage;
     [SerializeField] Camera weaponCamera;
 
@@ -26,6 +26,7 @@ public class ActiveWeapon : MonoBehaviourPun
 
 
     [SerializeField] private float timeToNextShot = 0f;
+    public event Action<bool, float> OnZoomIn;
 
     private void Awake()
     {
@@ -51,7 +52,7 @@ public class ActiveWeapon : MonoBehaviourPun
         }
 
         HandleShoot();
-        //HandleZoom();
+        HandleZoom();
     }
 
     public void AdjustAmmo(int amount)
@@ -142,6 +143,28 @@ public class ActiveWeapon : MonoBehaviourPun
     {
         if (!currentWeapon) return;
         currentWeapon.PlayEffect();
+    }
+
+    void HandleZoom()
+    {
+        if (!currentWeaponSO.CanZoom)
+        {
+            return;
+        }
+        OnZoomIn?.Invoke(starterAssetsInputs.zoom, currentWeaponSO.ZoomAmount);
+        //if (starterAssetsInputs.zoom)
+        //{
+        //    //zoomInImage.SetActive(true);
+        //    GameManager.Instance.PlayerFollowCamera.m_Lens.FieldOfView = Mathf.Lerp(GameManager.Instance.PlayerFollowCamera.m_Lens.FieldOfView, defaultFOV - currentWeaponSO.ZoomAmount, Time.deltaTime * 10f);
+        //    weaponCamera.fieldOfView = currentWeaponSO.ZoomAmount - 10f;
+        //}
+        //else
+        //{
+        //    //zoomInImage.SetActive(false);
+        //    GameManager.Instance.PlayerFollowCamera.m_Lens.FieldOfView = Mathf.Lerp(GameManager.Instance.PlayerFollowCamera.m_Lens.FieldOfView, defaultFOV, Time.deltaTime * 10f);
+        //    weaponCamera.fieldOfView = defaultFOV;
+
+        //}
     }
 
 }

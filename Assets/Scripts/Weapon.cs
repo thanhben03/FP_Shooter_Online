@@ -12,7 +12,7 @@ public class Weapon : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        impluseSource = GetComponent<CinemachineImpulseSource>();
     }
 
     // Update is called once per frame
@@ -34,7 +34,7 @@ public class Weapon : MonoBehaviour
 
         Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, Mathf.Infinity, interactionLayers, QueryTriggerInteraction.Ignore);
 
-
+        impluseSource.GenerateImpulse();
         //impluseSource.GenerateImpulse();
         if (hit.collider != null)
         {

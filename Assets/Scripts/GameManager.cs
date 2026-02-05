@@ -1,9 +1,19 @@
+using Cinemachine;
 using Photon.Pun;
 using UnityEngine;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
+    [SerializeField] CinemachineVirtualCamera playerFollowCamera;
+    public static GameManager Instance;
+    public CinemachineVirtualCamera PlayerFollowCamera => PlayerFollowCamera;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     void Start()
     {
         PhotonNetwork.AutomaticallySyncScene = true;
@@ -14,6 +24,11 @@ public class GameManager : MonoBehaviourPunCallbacks
     void Update()
     {
         
+    }
+
+    public void SetPlayerFollowCamera(CinemachineVirtualCamera playerFollowCamera)
+    {
+        this.playerFollowCamera = playerFollowCamera;
     }
 
     public override void OnConnectedToMaster()
