@@ -23,6 +23,7 @@ public class Robot : MonoBehaviour
     {
 
         if (!PhotonNetwork.IsMasterClient) return;
+        if (GameManager.Instance.IsGameOver) return;
 
         FindNearestPlayer();
         if (target == null) return;

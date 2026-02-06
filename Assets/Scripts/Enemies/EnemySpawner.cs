@@ -18,6 +18,7 @@ public class EnemySpawner : MonoBehaviourPunCallbacks
     void Start()
     {
         if (!PhotonNetwork.IsMasterClient) return;
+        if (GameManager.Instance.IsGameOver) return;
 
         StartCoroutine(SpawnEnemy());
     }

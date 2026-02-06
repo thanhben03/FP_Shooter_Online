@@ -131,6 +131,8 @@ namespace StarterAssets
 
 		private void Update()
 		{
+			if (GameManager.Instance.IsGameOver)
+				return;
             if (!photonView.IsMine) return;
 
             JumpAndGravity();

@@ -49,6 +49,7 @@ MonoBehaviour:
   - RPC_SpawnProjectile
   - RPC_ForceLeaveRoom
   - RPC_RequestPickup
+  - RPC_GameLose
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

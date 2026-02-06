@@ -18,7 +18,8 @@ public class AmmoPickup : MonoBehaviour
             if (playerPV.IsMine)
             {
                 PlayerController playerController = other.GetComponent<PlayerController>();
-                if (playerController != null && playerController.activeWeapon)
+                if (!playerController.activeWeapon) return;
+                if (playerController != null && playerController.activeWeapon.WeaponSO)
                 {
                     playerController.AddAmmo();
                     AmmoSpawner.Instance.RequestPickup(poolId, playerPV.ViewID);

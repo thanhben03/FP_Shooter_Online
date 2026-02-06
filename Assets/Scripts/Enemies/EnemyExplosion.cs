@@ -1,3 +1,4 @@
+using Photon.Pun;
 using UnityEngine;
 
 public class EnemyExplosion : MonoBehaviour
@@ -10,6 +11,12 @@ public class EnemyExplosion : MonoBehaviour
             if (enemyHealth != null)
             {
                 enemyHealth.RequestDamage(9999);
+                PhotonView playerPV = other.GetComponent<PhotonView>();
+                if (!playerPV.IsMine) return;
+
+                PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
+                playerHealth.TakeDamage(3);
+                
             }
         }
     }

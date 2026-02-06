@@ -20,7 +20,7 @@ public class PlayerCamera : MonoBehaviour
         }
 
         vcam =
-            FindAnyObjectByType<CinemachineVirtualCamera>();
+            GameObject.Find("PlayerFollowCamera").GetComponent<CinemachineVirtualCamera>();
 
         vcam.Follow = transform;
         vcam.LookAt = transform;

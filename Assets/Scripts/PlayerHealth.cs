@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerHealth : MonoBehaviourPun 
 {
     [SerializeField] int health;
-    public event Action<int> OnHealthChange;
+    public event Action OnLoseGame;
     public PlayerCamera playerCamera;
     void Start()
     {
@@ -27,10 +27,30 @@ public class PlayerHealth : MonoBehaviourPun
         HealthUI.Instance.UpdateUIHealth(health);
         if (health <= 0)
         {
-            playerCamera.SwitchCamera();
-            GameObject.FindGameObjectWithTag("Canvas").SetActive(false);
+            // neu khong con player nao song
+            //if (PhotonNetwork.PlayerList.Length <= 1)
+            //{
+            //    photonView.RPC(nameof(RPC_GameLose), RpcTarget.All);
+            //} else
+            //{
 
-            PhotonNetwork.Destroy(gameObject);
+            //}
+            if (!GameManager.Instance.IsDiedAll())
+            {
+                playerCamera.SwitchCamera();
+                PhotonNetwork.Destroy(gameObject);
+                GameObject.FindGameObjectWithTag("Canvas").SetActive(false);
+
+            } else
+            {
+                photonView.RPC(nameof(RPC_GameLose), RpcTarget.All);
+            }
         }
+    }
+
+    [PunRPC]
+    void RPC_GameLose()
+    {
+        GameManager.Instance.RPC_GameLose();
     }
 }

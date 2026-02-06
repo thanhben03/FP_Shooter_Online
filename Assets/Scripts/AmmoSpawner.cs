@@ -84,7 +84,6 @@ public class AmmoSpawner : MonoBehaviourPun
 
         photonView.RPC(nameof(RPC_DisableAmmo), RpcTarget.All, poolId);
 
-        // Master ra lệnh respawn
         StartCoroutine(SpawnAmmo(poolId));
 
     }

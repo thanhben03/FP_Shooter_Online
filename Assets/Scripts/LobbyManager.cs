@@ -76,6 +76,18 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
+        if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("GameStarted", out object startedObj))
+        {
+            bool started = (bool)startedObj;
+
+            if (started)
+            {
+                Debug.Log("Game already started. Leaving room...");
+                PhotonNetwork.LeaveRoom();
+                return;
+            }
+        }
+        GameManager.Instance.SetPlayerData(PhotonNetwork.LocalPlayer.ActorNumber);
         PhotonNetwork.LoadLevel("SelectCharacter");
 
     }

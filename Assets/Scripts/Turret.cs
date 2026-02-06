@@ -29,6 +29,7 @@ public class Turret : MonoBehaviourPun
     void Update()
     {
         if (!PhotonNetwork.IsMasterClient) return;
+        if (GameManager.Instance.IsGameOver) return;
 
         FindNearestPlayer();
         if (target == null) return;

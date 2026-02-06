@@ -10,6 +10,7 @@ public class ReadyManager : MonoBehaviourPunCallbacks
     public const string READY_KEY = "ready";
 
     public event Action<int, bool> OnReadyChanged;
+    private const string GAME_STARTED_KEY = "GameStarted";
 
     private void Awake()
     {
@@ -57,7 +58,12 @@ public class ReadyManager : MonoBehaviourPunCallbacks
             if (!IsReady(p))
                 return;
         }
+        Hashtable props = new Hashtable();
+        props[GAME_STARTED_KEY] = true;
+        PhotonNetwork.CurrentRoom.SetCustomProperties(props);
 
+        PhotonNetwork.CurrentRoom.IsOpen = false;
+        PhotonNetwork.CurrentRoom.IsVisible = false;
         PhotonNetwork.LoadLevel("MainLevel");
     }
 
