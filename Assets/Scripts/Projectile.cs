@@ -40,6 +40,10 @@ public class Projectile : MonoBehaviour
                 playerHealth.TakeDamage(damage);
             }
 
+        } else
+        {
+            Instantiate(projectileVFXPrefab, transform.position, Quaternion.identity);
+            Destroy(gameObject);
         }
     }
 }

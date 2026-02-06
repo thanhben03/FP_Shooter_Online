@@ -25,6 +25,13 @@ public class PlayerSelect : MonoBehaviour
         nickNameText.text = player.NickName;
         actorNumber = player.ActorNumber;
         SetReady(false);
+
+        int colorIndex = 0;
+        if (player.CustomProperties.TryGetValue("color", out object colorObj))
+        {
+            colorIndex = (int)colorObj;
+        }
+        SetColor(GameManager.Instance.Colors[colorIndex]);
     }
 
     public void SetReady(bool isReady)

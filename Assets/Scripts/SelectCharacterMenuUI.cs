@@ -47,7 +47,7 @@ public class SelectCharacterMenuUI : MonoBehaviourPunCallbacks
 
     void UpdateUI()
     {
-        for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
+        for (int i = 0; i < characters.Length; i++)
         {
             characters[i].gameObject.SetActive(false);
 
