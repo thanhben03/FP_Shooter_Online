@@ -62,7 +62,6 @@ public class ActiveWeapon : MonoBehaviourPun
         {
             currentAmmo = currentWeaponSO.MagazineSize;
         }
-        ammoText.text = currentAmmo.ToString();
     }
 
 
@@ -118,7 +117,7 @@ public class ActiveWeapon : MonoBehaviourPun
     public void HandleShoot()
     {
         timeToNextShot += Time.deltaTime;
-        if (timeToNextShot < currentWeaponSO.FireRate)
+        if (timeToNextShot < currentWeaponSO.FireRate || currentAmmo <= 0)
         {
             return;
 

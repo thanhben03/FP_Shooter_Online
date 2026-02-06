@@ -52,6 +52,7 @@ public class EnemyHealth : MonoBehaviourPun
     {
 
         photonView.RPC(nameof(RPC_PlayExplosion), RpcTarget.All, transform.position);
+        EnemySpawner.Instance.SetEnemyCountProperyInCurrentRoom(-1);
         PhotonNetwork.Destroy(gameObject);
 
     }

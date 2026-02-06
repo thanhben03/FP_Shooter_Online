@@ -76,11 +76,22 @@ public class AmmoSpawner : MonoBehaviourPun
 
     }
 
-    public void RequestPickup(int poolId, int actorNumber)
+
+    [PunRPC]
+    void RPC_RequestPickup(int poolId, int actorNumber)
     {
         if (!PhotonNetwork.IsMasterClient) return;
 
         photonView.RPC(nameof(RPC_DisableAmmo), RpcTarget.All, poolId);
+
+        // Master ra lệnh respawn
         StartCoroutine(SpawnAmmo(poolId));
+
+    }
+
+    public void RequestPickup(int poolId, int actorNumber)
+    {
+        photonView.RPC(nameof(RPC_RequestPickup), RpcTarget.MasterClient, poolId, actorNumber);
+
     }
 }

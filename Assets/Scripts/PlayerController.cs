@@ -49,6 +49,7 @@ public class PlayerController : MonoBehaviourPun
     public void AddAmmo()
     {
         AmmoUI.Instance.UpdateUI(30);
+        activeWeapon.AdjustAmmo(30);
     }
 
     public void TakeDamage(float damage)

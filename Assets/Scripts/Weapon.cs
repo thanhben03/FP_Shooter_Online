@@ -44,8 +44,16 @@ public class Weapon : MonoBehaviour
             PhotonNetwork.Instantiate(weaponSO.hitVFX.name, hit.point, Quaternion.identity);
 
             EnemyHealth enemyHealth = hit.collider.GetComponentInParent<EnemyHealth>();
+            if (enemyHealth != null)
+            {
+                enemyHealth?.RequestDamage(weaponSO.Damage);
 
-            enemyHealth?.RequestDamage(weaponSO.Damage);
+            } else
+            {
+                enemyHealth = hit.collider.GetComponent<EnemyHealth>();
+
+            }
+
         }
     }
 }

@@ -14,14 +14,15 @@ public class AmmoPickup : MonoBehaviour
         {
             PhotonView playerPV = other.GetComponent<PhotonView>();
 
-            AmmoSpawner.Instance.RequestPickup(poolId, playerPV.ViewID);
 
             if (playerPV.IsMine)
             {
                 PlayerController playerController = other.GetComponent<PlayerController>();
-                if (playerController != null)
+                if (playerController != null && playerController.activeWeapon)
                 {
                     playerController.AddAmmo();
+                    AmmoSpawner.Instance.RequestPickup(poolId, playerPV.ViewID);
+
                 }
             }
 
