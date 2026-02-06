@@ -36,7 +36,15 @@ public class SpawnCharacter : MonoBehaviour
 
         if (PhotonNetwork.IsConnected)
         {
-            PhotonNetwork.Instantiate(character.name, spawnPoint[PhotonNetwork.CurrentRoom.PlayerCount - 1].position, spawnPoint[PhotonNetwork.CurrentRoom.PlayerCount - 1].rotation, 0);
+            int spawnIndex = PhotonNetwork.LocalPlayer.ActorNumber - 1;
+
+            PhotonNetwork.Instantiate(
+                character.name,
+                spawnPoint[spawnIndex].position,
+                spawnPoint[spawnIndex].rotation,
+                0
+            );
+
 
         }
 

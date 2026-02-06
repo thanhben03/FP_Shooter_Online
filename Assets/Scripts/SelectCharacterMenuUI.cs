@@ -7,9 +7,16 @@ using UnityEngine.SceneManagement;
 
 public class SelectCharacterMenuUI : MonoBehaviourPunCallbacks
 {
+    public static SelectCharacterMenuUI Instance;
     public TextMeshProUGUI roomNameText;
-    public GameObject[] characters;
-   
+    public PlayerSelect[] characters;
+    public const string COLOR_KEY = "color";
+
+
+    private void Awake()
+    {
+        Instance = this;
+    }
     IEnumerator Start()
     {
         yield return new WaitForSeconds(1);
@@ -18,10 +25,23 @@ public class SelectCharacterMenuUI : MonoBehaviourPunCallbacks
             roomNameText.text = "Room: " + PhotonNetwork.CurrentRoom.Name;
 
             UpdateUI();
+            ReadyManager.Instance.OnReadyChanged += ReadyManager_OnReadyChanged;
         }
         else
         {
             roomNameText.text = "Not in room!";
+        }
+    }
+
+    private void ReadyManager_OnReadyChanged(int actorNumber, bool isReady)
+    {
+        foreach (var p in characters)
+        {
+            if (p.GetComponent<PlayerSelect>().Actornumber == actorNumber)
+            {
+                p.GetComponent<PlayerSelect>().SetReady(isReady);
+                break;
+            }
         }
     }
 
@@ -35,11 +55,27 @@ public class SelectCharacterMenuUI : MonoBehaviourPunCallbacks
         Debug.Log(PhotonNetwork.PlayerList.Length);
         for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
         {
-            characters[i].SetActive(true);
+            characters[i].gameObject.SetActive(true);
             Player player = PhotonNetwork.PlayerList[i];
-            Debug.Log(player.NickName);
-            characters[i].GetComponent<PlayerSelect>().SetData(player);
+            characters[i].SetData(player);
 
+        }
+    }
+
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
+    {
+        if (changedProps.ContainsKey(COLOR_KEY))
+        {
+            int indexColor = (int)changedProps[COLOR_KEY];
+            foreach (var p in characters)
+            {
+                PlayerSelect player = p.GetComponent<PlayerSelect>();
+                if (player.Actornumber == targetPlayer.ActorNumber)
+                {
+                    player.SetColor(GameManager.Instance.Colors[indexColor]);
+                    break;
+                }
+            }
         }
     }
 

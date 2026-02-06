@@ -390,6 +390,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeWeapon: {fileID: 4026427791903226575}
   gunAnimator: {fileID: 0}
+  playerCapsule: {fileID: 2218158135361113122}
 --- !u!114 &5235676138745018222
 MonoBehaviour:
   m_ObjectHideFlags: 0
