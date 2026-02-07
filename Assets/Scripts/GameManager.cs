@@ -2,6 +2,7 @@ using Cinemachine;
 using Photon.Pun;
 using StarterAssets;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using UnityEngine;
 
 
@@ -11,9 +12,10 @@ public class GameManager : MonoBehaviourPun
     public bool isGameOver;
     public bool IsGameOver => isGameOver;
     public Color[] Colors => colors;
-    public Dictionary<int, PlayerData> playerList;
+    [SerializeField] public Dictionary<int, PlayerData> playerList;
     [SerializeField] Color[] colors;
     [SerializeField] CinemachineVirtualCamera deathCam;
+    public const string ROOM_ALIVE_COUNT = "aliveCount";
 
     [System.Serializable]
     public class PlayerData
@@ -23,79 +25,28 @@ public class GameManager : MonoBehaviourPun
 
     private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        playerList = new Dictionary<int, PlayerData>();
+
     }
 
     private void Start()
     {
-        playerList = new Dictionary<int, PlayerData>();
     }
 
-    //[PunRPC]
-    //public void GameLose()
-    //{
-    //    if(!PhotonNetwork.IsMasterClient) return;
-
-    //    bool isDiedAll = true;
-
-    //    // neu co nguoi choi con song
-    //    foreach (var pair in playerList)
-    //    {
-    //        int actorNumber = pair.Key;
-    //        PlayerData playerData = pair.Value;
-
-    //        if (playerData.isLive)
-    //        {
-    //            isDiedAll = false;
-    //            break;
-    //        }
-    //    }
-
-    //    if (!isDiedAll)
-    //    {
-
-    //    }
-
-    //    // tat ca da die
-
-
-
-    //    deathCam = GameObject.FindGameObjectWithTag("DeathCam").GetComponent<CinemachineVirtualCamera>();
-    //    isGameOver = true;
-    //    deathCam.Priority = 20;
-    //    SetCursorState(false);
-    //    ResultUI.Instance.GameLose();
-    //}
-
-    //[PunRPC]
-    //void RPC_ReportDeath(int actorNumber)
-    //{
-    //    if (!PhotonNetwork.IsMasterClient) return;
-
-    //    playerList[actorNumber].isLive = false;
-
-    //    photonView.RPC(nameof(RPC_PlayerLose), PhotonNetwork.CurrentRoom.GetPlayer(actorNumber));
-
-    //    CheckGameLose();
-    //}
-
-    public bool IsDiedAll()
+    private void Update()
     {
-        bool isDiedAll = true;
-        playerList[PhotonNetwork.LocalPlayer.ActorNumber].isLive = false;
-        foreach (var pair in playerList)
+        if (IsGameOver)
         {
-            PlayerData playerData = pair.Value;
-
-            if (playerData.isLive)
-            {
-                isDiedAll = false;
-                break;
-            }
+            SetCursorState(false);
         }
-
-        return isDiedAll;
     }
 
     [PunRPC]
@@ -112,17 +63,40 @@ public class GameManager : MonoBehaviourPun
 
         SetCursorState(false);
         ResultUI.Instance.GameLose();
+
     }
 
     public void SetCursorState(bool status)
     {
-        StarterAssetsInputs starterAssetsInputs = FindAnyObjectByType<StarterAssetsInputs>();
-        starterAssetsInputs.SetCursorState(status);
+        Cursor.lockState = status ? CursorLockMode.Locked : CursorLockMode.None;
+        Cursor.visible = !status;
     }
 
-    public void SetPlayerData(int actorNumber)
+
+    public int CountPlayerLive()
+    {
+        int alive = -1;
+
+        if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(ROOM_ALIVE_COUNT))
+            alive = (int)PhotonNetwork.CurrentRoom.CustomProperties[ROOM_ALIVE_COUNT];
+        Debug.Log(alive);
+        return alive;
+    }
+
+    public void DecreaseAliveCount()
     {
         if (!PhotonNetwork.IsMasterClient) return;
-        playerList.Add(actorNumber, new PlayerData { isLive = true });
+
+        int alive = 0;
+
+        if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(ROOM_ALIVE_COUNT))
+            alive = (int)PhotonNetwork.CurrentRoom.CustomProperties[ROOM_ALIVE_COUNT];
+
+        alive--;
+
+        var props = new ExitGames.Client.Photon.Hashtable();
+        props[ROOM_ALIVE_COUNT] = alive;
+        Debug.Log("After one player die: " + alive);
+        PhotonNetwork.CurrentRoom.SetCustomProperties(props);
     }
 }

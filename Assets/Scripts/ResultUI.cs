@@ -1,7 +1,9 @@
+using Photon.Pun;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class ResultUI : MonoBehaviour
+public class ResultUI : MonoBehaviourPun
 {
     public static ResultUI Instance { get; private set; }
     [SerializeField] Button mainButton;
@@ -12,6 +14,10 @@ public class ResultUI : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        mainButton.onClick.AddListener(() =>
+        {
+            MainMenu();
+        });
     }
 
     // Update is called once per frame
@@ -22,7 +28,8 @@ public class ResultUI : MonoBehaviour
 
     public void MainMenu()
     {
-        Debug.Log("Return main menu");
+        PhotonNetwork.LeaveRoom();
+        SceneManager.LoadScene("Lobby");
     }
 
     public void Quit()

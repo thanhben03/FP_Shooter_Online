@@ -2,7 +2,9 @@ using Photon.Pun;
 using Photon.Realtime;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -87,7 +89,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
                 return;
             }
         }
-        GameManager.Instance.SetPlayerData(PhotonNetwork.LocalPlayer.ActorNumber);
+        InitAliveCount();
+
         PhotonNetwork.LoadLevel("SelectCharacter");
 
     }
@@ -118,6 +121,17 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         OnAnyPlayerCreatedRoom.Invoke(cachedRoomList);
     }
 
+    public void InitAliveCount()
+    {
+        if (!PhotonNetwork.IsMasterClient) return;
+
+        int count = PhotonNetwork.CurrentRoom.PlayerCount;
+
+        var props = new ExitGames.Client.Photon.Hashtable();
+        props["aliveCount"] = count;
+
+        PhotonNetwork.CurrentRoom.SetCustomProperties(props);
+    }
 
 
 }

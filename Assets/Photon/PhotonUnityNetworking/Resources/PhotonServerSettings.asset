@@ -50,6 +50,9 @@ MonoBehaviour:
   - RPC_ForceLeaveRoom
   - RPC_RequestPickup
   - RPC_GameLose
+  - ReportAnyPlayerJoin
+  - RPC_SyncPlayerList
+  - RPC_RequestPlayerDie
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

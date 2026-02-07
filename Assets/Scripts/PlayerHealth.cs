@@ -1,55 +1,92 @@
-using Photon.Pun;
-using System;
+﻿using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 
-public class PlayerHealth : MonoBehaviourPun 
+public class PlayerHealth : MonoBehaviourPunCallbacks
 {
-    [SerializeField] int health;
-    public event Action OnLoseGame;
-    public PlayerCamera playerCamera;
-    void Start()
-    {
-        health = 5;
-        //if (!photonView.IsMine) return;
-        HealthUI.Instance.UpdateUIHealth(health);
-    }
+    [SerializeField] private int health = 5;
 
-    // Update is called once per frame
-    void Update()
+    [Header("Refs")]
+    [SerializeField] private PlayerCamera playerCamera;
+
+    private bool isDead = false;
+
+    private void Start()
     {
-        
+        // chỉ update UI cho player của mình
+        if (photonView.IsMine)
+        {
+            HealthUI.Instance.UpdateUIHealth(health);
+        }
     }
 
     public void TakeDamage(int damage)
     {
-        //if (!photonView.IsMine) return;s
+        // chỉ player của mình mới được nhận damage
+        if (!photonView.IsMine) return;
+        if (isDead) return;
+
         health -= damage;
         HealthUI.Instance.UpdateUIHealth(health);
+
         if (health <= 0)
         {
-            // neu khong con player nao song
-            //if (PhotonNetwork.PlayerList.Length <= 1)
-            //{
-            //    photonView.RPC(nameof(RPC_GameLose), RpcTarget.All);
-            //} else
-            //{
+            isDead = true;
 
-            //}
-            if (!GameManager.Instance.IsDiedAll())
-            {
-                playerCamera.SwitchCamera();
-                PhotonNetwork.Destroy(gameObject);
-                GameObject.FindGameObjectWithTag("Canvas").SetActive(false);
-
-            } else
-            {
-                photonView.RPC(nameof(RPC_GameLose), RpcTarget.All);
-            }
+            // gửi lên master báo: tôi đã chết
+            photonView.RPC(nameof(RPC_RequestPlayerDie), RpcTarget.MasterClient, PhotonNetwork.LocalPlayer.ActorNumber);
+            HandleLocalDeath();
         }
     }
 
+    private void HandleLocalDeath()
+    {
+        if (GameManager.Instance.CountPlayerLive() <= 1)
+        {
+            // gọi thua game cho tất cả
+            photonView.RPC(nameof(RPC_GameLose), RpcTarget.All);
+        } else
+        {
+            SwitchCamera();
+
+        }
+        UpdateUI();
+
+        //PhotonNetwork.Destroy(gameObject);
+    }
+
+    void SwitchCamera()
+    {
+        if (playerCamera != null)
+        {
+            playerCamera.SwitchCamera();
+        }
+    }
+
+    void UpdateUI()
+    {
+        var canvas = GameObject.FindGameObjectWithTag("Canvas");
+        if (canvas != null)
+        {
+            canvas.SetActive(false);
+        }
+    }
+
+    // ===================== RPC =====================
+
     [PunRPC]
-    void RPC_GameLose()
+    private void RPC_RequestPlayerDie(int actorNumber, PhotonMessageInfo info)
+    {
+        // chỉ master xử lý
+        if (!PhotonNetwork.IsMasterClient) return;
+
+        // update dữ liệu sống/chết ở master
+        GameManager.Instance.DecreaseAliveCount();
+
+    }
+
+    [PunRPC]
+    private void RPC_GameLose()
     {
         GameManager.Instance.RPC_GameLose();
     }

@@ -52,7 +52,6 @@ public class SelectCharacterMenuUI : MonoBehaviourPunCallbacks
             characters[i].gameObject.SetActive(false);
 
         }
-        Debug.Log(PhotonNetwork.PlayerList.Length);
         for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
         {
             characters[i].gameObject.SetActive(true);
@@ -81,7 +80,7 @@ public class SelectCharacterMenuUI : MonoBehaviourPunCallbacks
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        Debug.Log("Player joined: " + newPlayer.NickName + " | ActorNumber: " + newPlayer.ActorNumber);
+        LobbyManager.Instance.InitAliveCount();
         UpdateUI();
 
     }
