@@ -66,6 +66,28 @@ public class GameManager : MonoBehaviourPun
 
     }
 
+    public void HandleGameWin()
+    {
+
+        photonView.RPC(nameof(RPC_GameWin), RpcTarget.All);
+    }
+
+    [PunRPC]
+    void RPC_GameWin()
+    {
+        isGameOver = true;
+
+        var deathCamObj = GameObject.FindGameObjectWithTag("DeathCam");
+        if (deathCamObj != null)
+        {
+            deathCam = deathCamObj.GetComponent<CinemachineVirtualCamera>();
+            if (deathCam != null) deathCam.Priority = 20;
+        }
+
+        SetCursorState(false);
+        ResultUI.Instance.GameWin();
+    }
+
     public void SetCursorState(bool status)
     {
         Cursor.lockState = status ? CursorLockMode.Locked : CursorLockMode.None;

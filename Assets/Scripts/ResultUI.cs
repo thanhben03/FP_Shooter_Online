@@ -42,4 +42,8 @@ public class ResultUI : MonoBehaviourPun
     {
         gameLose.SetActive(true);
     }
+    public void GameWin()
+    {
+        gameWin.SetActive(true);
+    }
 }

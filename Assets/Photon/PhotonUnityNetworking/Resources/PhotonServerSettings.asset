@@ -53,6 +53,7 @@ MonoBehaviour:
   - ReportAnyPlayerJoin
   - RPC_SyncPlayerList
   - RPC_RequestPlayerDie
+  - RPC_GameWin
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

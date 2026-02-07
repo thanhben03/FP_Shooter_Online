@@ -11,6 +11,8 @@ public class EnemySpawner : MonoBehaviourPunCallbacks
     public float spawnTime = 2f;
     public int spawnedCount = 0;
 
+    public int SpawnedCount => spawnedCount;
+
     private void Awake()
     {
         Instance = this;
@@ -55,6 +57,11 @@ public class EnemySpawner : MonoBehaviourPunCallbacks
         var props = new ExitGames.Client.Photon.Hashtable();
         props["EnemyCount"] = newValue;
         spawnedCount = newValue;
+        if (spawnedCount <= 0)
+        {
+            GameManager.Instance.HandleGameWin();
+        }
         PhotonNetwork.CurrentRoom.SetCustomProperties(props);
     }
+
 }
